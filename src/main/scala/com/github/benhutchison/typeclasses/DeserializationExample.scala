@@ -179,6 +179,8 @@ object DeserializationExample extends App {
 
   val js = Js(jsonString)
 
-  println( js.read[Seq[SuburbRating]] )
+  js.read[Seq[SuburbRating]] match {
+    case Right(ratings) => println(ratings.mkString(", "))
+  }
 
 }
