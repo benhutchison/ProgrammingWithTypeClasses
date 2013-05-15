@@ -21,16 +21,12 @@ object EquivalenceExample extends App {
     createdTime: Date)
 
   val benUser = User(1L, "brhutchison@gmail.com", "Ben", "Hutchison", new Date())
+  val modifiedUser = benUser.copy(lastName = "Hutchinson")
 
   //Built in "universal equality", by overriding java.lang.Object.equals()
   //Case classes automatically implement equals() based upon the values of all their fields
 
-  //proof it's not reference equality
   assert(benUser == benUser.copy())
-
-  val modifiedUser = benUser.copy(lastName = "Hutchinson")
-  assert(benUser != modifiedUser)
-
 
   //let's start by defining User equivalence outside of User itself
   //we'll use the Scala library class Equiv
@@ -40,12 +36,7 @@ object EquivalenceExample extends App {
       x.lastName == y.lastName && x.createdTime == y.createdTime
   }
 
-  //we can get the same results from our equiv, although it clunky and manual
-  assert(userEq.equiv(benUser, benUser.copy()))
-  assert(!userEq.equiv(benUser, modifiedUser))
-
-  //lets convert 'userEq' to a typeclass and pull in some syntatic
-  //sugar for an infix equivalence operator
+  //Typeclasses often require an implicit class to enrich (aka "pimp") the target data with the typeclass operations
   implicit class EquivOp[A](a1: A)(implicit e: Equiv[A]) {
 
     def ===(a2: A) = e.equiv(a1, a2)
